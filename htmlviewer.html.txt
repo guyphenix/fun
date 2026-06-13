@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Cup 2026 - Scoring System & Calculator</title>
+    <!-- FontAwesome for icons matching the source site -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for crisp modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --text-dark: #0f172a;
+            --primary: #2563eb;
+            --primary-light: #eff6ff;
+            --border: #e2e8f0;
+            --success: #16a34a;
+            --danger: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        /* Nav Layout */
+        nav {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+        .brand {
+            font-weight: 700;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+        .brand i {
+            color: var(--danger);
+            margin-right: 6px;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary);
+        }
+
+        /* Main Frame */
+        main {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .header-section {
+            margin-bottom: 25px;
+        }
+        .header-section h1 {
+            color: var(--text-dark);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .header-section h1 i {
+            color: var(--primary);
+        }
+        .header-section p {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Card Panels matching kevinmccormick.co.uk styling */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .card h4 {
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card h4 i {
+            color: var(--primary);
+            width: 20px;
+        }
+        .card p {
+            margin-bottom: 12px;
+        }
+        .card p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Highlight Boxes */
+        .example-box {
+            background: var(--bg-color);
+            border-left: 4px solid var(--border);
+            padding: 16px;
+            margin-top: 15px;
+            border-radius: 0 6px 6px 0;
+        }
+        .example-box.upside {
+            border-left-color: var(--success);
+        }
+        .example-box.flipside {
+            border-left-color: var(--danger);
+        }
+        .example-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        /* Standard Data Tables */
+        h6 {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            margin: 18px 0 8px 0;
+            font-weight: 600;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+        th, td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        td i {
+            color: #94a3b8;
+            margin-right: 6px;
+            font-size: 0.85rem;
+        }
+
+        /* Dynamic Interactive Calculator Design */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 15px;
+        }
+        @media (max-width: 768px) {
+            .calc-grid { grid-template-columns: 1fr; }
+        }
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+        .form-control {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            background-color: #fff;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 25px;
+        }
+        .checkbox-group input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        .base-score-panel {
+            background-color: var(--primary-light);
+            border: 1px dashed var(--primary);
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .base-score-val {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        /* Interactive Multiplier Matrix Output */
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        @media (max-width: 480px) {
+            .matrix-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .matrix-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+        }
+        .matrix-slot {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        .matrix-points {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 2px;
+        }
+        .matrix-points.pos { color: var(--success); }
+        .matrix-points.neg { color: var(--danger); }
+
+        a { color: var(--primary); text-decoration: none; font-weight: 500;}
+        a:hover { text-decoration: underline; }
+        strong { color: var(--text-dark); }
+        .alert-info { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 14px; border-radius: 6px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-container">
+    <a href="#" class="brand"><i class="fa-solid fa-trophy"></i> World Cup 2026</a>
+    <ul class="nav-links">
+        <li><a href="#"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="#" class="active"><i class="fa-solid fa-calculator"></i> Scoring &amp; Calculator</a></li>
+        <li><a href="#"><i class="fa-solid fa-list-ol"></i> League Table</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <div class="header-section">
+    <h1><i class="fa-solid fa-star-of-life"></i> Scoring System, Entry Fee &amp; Prizes</h1>
+    <p>World Cup 2026 Live Companion Engine</p>
+  </div>
+
+  <!-- INTERACTIVE LIVE CALCULATOR PANEL -->
+  <div class="card" style="border: 2px solid var(--primary);">
+    <h4><i class="fa-solid fa-calculator" style="color:var(--primary)"></i> Match Score Calculator</h4>
+    <p style="color:#64748b; font-size: 0.9rem;">Input game metrics here to instantly generate scores across all selection slot multipliers.</p>
+    
+    <div class="calc-grid">
+        <!-- Input Form Control Column -->
+        <div>
+            <div class="form-group">
+                <label for="calc-stage">Tournament Phase</label>
+                <select id="calc-stage" class="form-control" onchange="handleStageChange()">
+                    <option value="group">Group Stage &amp; Round of 32</option>
+                    <option value="knockout">Round of 16 onwards (QF, SF, Finals)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="calc-result">Match Result outcome</label>
+                <select id="calc-result" class="form-control" onchange="calculateScores()">
+                    <!-- Options populated via JS depending on stage selection -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="calc-scored">Goals Scored (Normal + Extra Time)</label>
+                <input type="number" id="calc-scored" class="form-control" min="0" value="2" oninput="calculateScores()">
+            </div>
+
+            <div class="form-group">
+                <label for="calc-conceded">Goals Conceded (Normal + Extra Time)</label>
+                <input type="number" id="calc-conceded" class="form-control" min="0" value="0" oninput="handleConcededChange()">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="calc-clean" checked onchange="calculateScores()">
+                <label for="calc-clean">Clean Sheet Kept</label>
+            </div>
+        </div>
+
+        <!-- Dynamic Live Calculations Summary Matrix View -->
+        <div style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="base-score-panel">
+                <div style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; color: #475569;">Base Game Points</div>
+                <div id="base-score-display" class="base-score-val">8</div>
+            </div>
+
+            <div>
+                <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; color: var(--text-dark);">Scores Across All Slots:</div>
+                <div class="matrix-grid">
+                    <div class="matrix-card"><div class="matrix-slot">x1</div><div id="m-x1" class="matrix-points">8</div></div>
+                    <div class="matrix-card"><div class="matrix-slot">x2</div><div id="m-x2" class="matrix-points">16</div></div>
+                    <div class="matrix-card"><div class="matrix-slot">x3</div><div id="m-x3" class="matrix-points">24</div></div>
+                    <div class="matrix-card"><div class="matrix-slot">x4</div><div id="m-x4" class="matrix-points">32</div></div>
+                    <div class="matrix-card"><div class="matrix-slot">x5</div><div id="m-x5" class="matrix-points">40</div></div>
+                    <div class="matrix-card"><div class="matrix-slot">x6</div><div id="m-x6" class="matrix-points">48</div></div>
+                    <div class="matrix-card"><div class="matrix-slot">x7</div><div id="m-x7" class="matrix-points">56</div></div>
+                    <div class="matrix-card"><div class="matrix-slot">x8</div><div id="m-x8" class="matrix-points">64</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- THE IDEA PANEL -->
+  <div class="card">
+    <h4><i class="fa-solid fa-lightbulb"></i> The Idea</h4>
+    <p>You have a budget of <strong>400</strong> to use to pick your best 8 team line-up of the nations you think will excel at World Cup 2026.</p>
+    <p>Each team has been assigned a value based on their odds of doing well in the tournament. These range from heavy favourites like <strong>Spain (40)</strong> and <strong>France (38)</strong> down to massive underdogs like <strong>Haiti and Jordan (−16)</strong>.</p>
+    <p>Your budget of 400 is spent by multiplying the team's value by the slot you put them in. For example, if you put Spain in your top ×8 slot, it uses up 320 of your budget (8 × 40). If you put an underdog like Haiti in your ×7 slot, it can help to balance your budget because you'll get value back into your budget (7 × −16 = −112). Balance your picks so you don't go bust on your budget!.</p>
+    <p>The deadline is 7pm 11th June 2026.</p>
+  </div>
+
+  <!-- POSITION MULTIPLIER RULES PANEL -->
+  <div class="card">
+    <h4><i class="fa-solid fa-arrows-up-down-left-right"></i> The Position Multiplier</h4>
+    <p>Once you've submitted your selection of 8 teams, within budget, and the tournament begins, you get points each time your team plays in the real tournament. The points system for each match is explained further down this page, and then each game score for a team is <strong>multiplied by the slot you placed them in</strong>.</p>
+    
+    <div class="example-box upside">
+      <div class="example-title"><i class="fa-solid fa-circle-up" style="color:var(--success)"></i> Example — the upside</div>
+      <p>Your top pick (x8) wins a group game 2–0.</p>
+      <p>Your score: Win (+3) + 2 goals scored (+4) + clean sheet (+1) = <strong>8 points</strong></p>
+      <p>Your multiplier score: 8 × 8 = <strong>+64 points</strong></p>
+    </div>
+
+    <div class="example-box flipside">
+      <div class="example-title"><i class="fa-solid fa-circle-down" style="color:var(--danger)"></i> Example — the flip side</div>
+      <p>Your 7x pick lose a group game 0–3.</p>
+      <p>Your score: Loss (−3) + 0 goals scored (0) + 3 conceded (−3) = <strong>−6 points</strong></p>
+      <p>Your multiplier score: −6 × 7 = <strong>−42 points</strong></p>
+    </div>
+  </div>
+
+  <!-- MATCH POINTS STRUCTURAL DATA TABLES -->
+  <div class="card">
+    <h4><i class="fa-solid fa-futbol"></i> 1. Match Points</h4>
+    <p>Awarded based on the result of each game.</p>
+
+    <h6>Group Stage</h6>
+    <table>
+      <thead>
+        <tr><th>Result</th><th>Points</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><i class="fa-solid fa-square-check"></i> Win</td><td>+3</td></tr>
+        <tr><td><i class="fa-solid fa-square-minus"></i> Draw</td><td>+1</td></tr>
+        <tr><td><i class="fa-solid fa-square-xmark"></i> Loss</td><td>−3</td></tr>
+      </tbody>
+    </table>
+
+    <h6>Knockout Stage (R32, R16, QF, SF, Third-Place, Final)</h6>
+    <table>
+      <thead>
+        <tr><th>Result</th><th>Points</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><i class="fa-solid fa-stopwatch"></i> Win in Normal Time (90 mins)</td><td>+4</td></tr>
+        <tr><td><i class="fa-solid fa-hourglass-half"></i> Win in Extra Time (120 mins)</td><td>+3</td></tr>
+        <tr><td><i class="fa-solid fa-gavel"></i> Win on Penalties</td><td>+2</td></tr>
+        <tr><td><i class="fa-solid fa-gavel"></i> Loss on Penalties</td><td>+1</td></tr>
+        <tr><td><i class="fa-solid fa-hourglass-end"></i> Loss in Extra Time</td><td>0</td></tr>
+        <tr><td><i class="fa-solid fa-clock"></i> Loss in Normal Time</td><td>−1</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SCORE POINTS STRUCTURAL DATA TABLES -->
+  <div class="card">
+    <h4><i class="fa-solid fa-chart-simple"></i> 2. Score Points</h4>
+    <p>Awarded based on goals scored, goals conceded, and clean sheets.</p>
+
+    <h6>Group Stage &amp; Round of 32</h6>
+    <table>
+      <thead>
+        <tr><th>Event</th><th>Points</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><i class="fa-solid fa-circle-plus"></i> Goal scored</td><td>+2 per goal</td></tr>
+        <tr><td><i class="fa-solid fa-circle-minus"></i> Goal conceded</td><td>−1 per goal</td></tr>
+        <tr><td><i class="fa-solid fa-shield-halved"></i> Clean sheet (90 or 120 mins)</td><td>+1</td></tr>
+      </tbody>
+    </table>
+
+    <h6>Round of 16 onwards (QF, SF, Third-Place, Final)</h6>
+    <table>
+      <thead>
+        <tr><th>Event</th><th>Points</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><i class="fa-solid fa-circle-plus"></i> Goal scored</td><td>+3 per goal</td></tr>
+        <tr><td><i class="fa-solid fa-circle-minus"></i> Goal conceded</td><td>−1 per goal</td></tr>
+        <tr><td><i class="fa-solid fa-shield-halved"></i> Clean sheet (90 or 120 mins)</td><td>+2</td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-size: 0.9rem; color: #64748b;"><i class="fa-solid fa-triangle-exclamation"></i> Goals scored in penalty shoot-outs do not count towards score points.</p>
+  </div>
+
+  <!-- TIEBREAKER PANEL -->
+  <div class="card">
+    <h4><i class="fa-solid fa-square-full" style="color:#eab308"></i> Tiebreaker</h4>
+    <p>In the event of a tie on points, the tiebreaker is your prediction for the <strong>total number of yellow cards</strong> across all games in the tournament. Closest prediction wins.</p>
+  </div>
+
+  <!-- PAYMENTS PANEL -->
+  <div class="card">
+    <h4><i class="fa-solid fa-pound-sign"></i> Entry Fee</h4>
+    <p>Entries cost £10. Please use this <strong><a href="https://www.paypal.com/paypalme/rooanddavid" target="_blank">PayPal link</a></strong> or this <strong><a href="https://monzo.me/davidlloyd10" target="_blank">Monzo link</a></strong> to send payment to David Lloyd.</p>
+    <p>Deadline for entries is 7pm 11th June 2026.</p>
+  </div>
+
+  <!-- CONNECTIVITY PANEL -->
+  <div class="card">
+    <h4><i class="fa-solid fa-comments"></i> During World Cup 2026</h4>
+    <p>Join our WhatsApp group: <a href="https://chat.whatsapp.com/GbzyWwY0nnKGO9A7TKsCO4" target="_blank">here</a></p>
+    <p>Follow the league table: <a href="https://kevinmccormick.co.uk/dave_lloyd/wc26.php" target="_blank">here</a></p>
+  </div>
+
+  <!-- PRIZES PANEL -->
+  <div class="card">
+    <h4><i class="fa-solid fa-award"></i> Prizes</h4>
+    <p>100% of the prize pot goes to the winners and the exact split has now been confirmed:</p>
+    <table>
+      <thead>
+        <tr><th>Place</th><th>Share of pot</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><i class="fa-solid fa-medal" style="color:#eab308"></i> <strong>1st place</strong></td><td>£165</td></tr>
+        <tr><td><i class="fa-solid fa-medal" style="color:#94a3b8"></i> <strong>2nd place</strong></td><td>£85</td></tr>
+        <tr><td><i class="fa-solid fa-medal" style="color:#b45309"></i> <strong>3rd place</strong></td><td>£40</td></tr>
+        <tr><td><i class="fa-solid fa-heart" style="color:#ec4899"></i> <strong>Last place</strong></td><td>£40</td></tr>
+      </tbody>
+    </table>
+    <div class="alert-info">
+      <i class="fa-solid fa-circle-info" style="color: var(--success); margin-right:6px;"></i> <strong>Last place qualification:</strong> To qualify for the last place prize your total team value must be <strong>375 or higher</strong>. Prizes are rounded to the nearest £5 so may be a little more or less than the percentages shown.
+    </div>
+  </div>
+</main>
+
+<script>
+    // Group stage outcome values
+    const groupResults = {
+        'win': { name: 'Win', val: 3 },
+        'draw': { name: 'Draw', val: 1 },
+        'loss': { name: 'Loss', val: -3 }
+    };
+
+    // Knockout outcome values
+    const knockoutResults = {
+        'win_90': { name: 'Win in Normal Time (90 mins)', val: 4 },
+        'win_120': { name: 'Win in Extra Time (120 mins)', val: 3 },
+        'win_pk': { name: 'Win on Penalties', val: 2 },
+        'loss_pk': { name: 'Loss on Penalties', val: 1 },
+        'loss_120': { name: 'Loss in Extra Time', val: 0 },
+        'loss_90': { name: 'Loss in Normal Time', val: -1 }
+    };
+
+    // Setup initial dropdown items dynamically
+    function handleStageChange() {
+        const stage = document.getElementById('calc-stage').value;
+        const resultSelect = document.getElementById('calc-result');
+        resultSelect.innerHTML = '';
+
+        const targetMap = (stage === 'group') ? groupResults : knockoutResults;
+        
+        for (const [key, obj] of Object.entries(targetMap)) {
+            let opt = document.createElement('option');
+            opt.value = key;
+            opt.innerText = obj.name;
+            resultSelect.appendChild(opt);
+        }
+        calculateScores();
+    }
+
+    // Auto toggle check state for intuitive UI flow
+    function handleConcededChange() {
+        const conceded = parseInt(document.getElementById('calc-conceded').value) || 0;
+        document.getElementById('calc-clean').checked = (conceded === 0);
+        calculateScores();
+    }
+
+    // Perform rule matching calculations
+    function calculateScores() {
+        const stage = document.getElementById('calc-stage').value;
+        const resultKey = document.getElementById('calc-result').value;
+        const goalsScored = parseInt(document.getElementById('calc-scored').value) || 0;
+        const goalsConceded = parseInt(document.getElementById('calc-conceded').value) || 0;
+        const isCleanSheet = document.getElementById('calc-clean').checked;
+
+        if (!resultKey) return;
+
+        let matchPoints = 0;
+        let goalScoredValue = 0;
+        let cleanSheetValue = 0;
+
+        // Apply rules based on page constraints
+        if (stage === 'group') {
+            matchPoints = groupResults[resultKey] ? groupResults[resultKey].val : 0;
+            goalScoredValue = 2;
+            cleanSheetValue = 1;
+        } else {
+            matchPoints = knockoutResults[resultKey] ? knockoutResults[resultKey].val : 0;
+            goalScoredValue = 3;
+            cleanSheetValue = 2;
+        }
+
+        // Tally game pieces
+        let scorePoints = (goalsScored * goalScoredValue) + (goalsConceded * -1);
+        if (isCleanSheet) {
+            scorePoints += cleanSheetValue;
+        }
+
+        const totalBaseScore = matchPoints + scorePoints;
+
+        // Display base game score value
+        document.getElementById('base-score-display').innerText = (totalBaseScore > 0 ? '+' : '') + totalBaseScore;
+
+        // Apply the core multiplier loop logic
+        for (let i = 1; i <= 8; i++) {
+            let finalSlotScore = totalBaseScore * i;
+            let targetEl = document.getElementById(`m-x${i}`);
+            
+            targetEl.innerText = (finalSlotScore > 0 ? '+' : '') + finalSlotScore;
+            
+            // Modern conditional display adjustments
+            targetEl.className = 'matrix-points';
+            if (finalSlotScore > 0) targetEl.classList.add('pos');
+            if (finalSlotScore < 0) targetEl.classList.add('neg');
+        }
+    }
+
+    // Run layout initializer on page load
+    window.onload = function() {
+        handleStageChange();
+    };
+</script>
+
+</body>
+</html>
